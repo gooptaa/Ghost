@@ -9,7 +9,8 @@ var dbx = new Dropbox({ accessToken: accessToken });
 const findOrCreatePath = function(filepath, target, isFile){
   if (fs.existsSync(`${target}${filepath}`)) {
     if (isFile){
-      fs.writeFile(`${target}${filepath}`, isFile, (err) => {
+      console.log("we got here")
+      fs.writeFile(`${target}${isFile.path_display}`, isFile, (err) => {
         if (err) {console.error(err)}
       })
     }
