@@ -1,0 +1,24 @@
+{
+  "name": "ghost",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "dropbox": "^2.5.2",
+    "fuse-bindings": "^2.11.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gooptaa/Ghost.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gooptaa/Ghost/issues"
+  },
+  "homepage": "https://github.com/gooptaa/Ghost#readme"
+}
