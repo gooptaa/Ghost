@@ -13,3 +13,10 @@ dbx.filesListFolder({path: ''})
     console.log(error);
   });
 
+dbx.filesDownload({path: '/screenshot_2017-01-04-19-46-24.png'})
+  .then(function(response){
+    console.log(response)
+  })
+  .catch(function(error){
+    console.log(error)
+  })
