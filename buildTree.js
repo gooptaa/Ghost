@@ -1,13 +1,47 @@
 const Dropbox = require('dropbox');
 const fs = require('fs')
+const path = require('path')
 
 let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
 
 var dbx = new Dropbox({ accessToken: accessToken });
 
-dbx.filesListFolder({path: ''})
-  .then(function(response) {
-    console.log(response);
+const findOrCreatePath = function(filepath, target, isFile){
+  if (fs.existsSync(`${target}${filepath}`)) {
+    if (isFile){
+      fs.writeFile(`${target}${filepath}`, isFile, (err) => {
+        if (err) {console.error(err)}
+      })
+    }
+    else {return}
+  }
+  else fs.mkdirSync(`${target}${filepath}`)
+}
+
+const detectAndHandleType = function(entry, target) {
+  let tag = entry['.tag']
+  if (tag === 'folder') {return handleFolder(entry, target)}
+  if (tag === 'file') {return handleFile(entry, target)}
+  else {console.error('Unknown type')}
+}
+
+const handleFolder = function(folder, target) {
+  findOrCreatePath(folder.path_display, target, null)
+}
+
+const handleFile = function(file, target) {
+  let endPoint = file.path_display.indexOf(file.name)
+  let filepath = file.path_display.slice(0, endPoint)
+  findOrCreatePath(filepath, target, file)
+}
+
+
+dbx.filesListFolder({path: '/node', recursive: true})
+  .then(response => response.entries)
+  .then(entries => {
+    entries.forEach(entry => (
+      detectAndHandleType(entry, './for_tests')
+    ))
   })
   .catch(function(error) {
     console.log(error);
