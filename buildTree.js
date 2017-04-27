@@ -1,6 +1,5 @@
 const Dropbox = require('dropbox');
 const fs = require('fs')
-const path = require('path')
 
 let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
 
@@ -36,14 +35,17 @@ const handleFile = function(file, target) {
   findOrCreatePath(filepath, target, file)
 }
 
+module.exports = origin => (
+  dbx.filesListFolder({path: origin, recursive: true})
+    .then(response => response.entries)
+    .then(entries => {
+      console.log(entries)
+      entries.forEach(entry => (
+        detectAndHandleType(entry, './for_tests')
+      ))
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+  )
 
-dbx.filesListFolder({path: '/node', recursive: true})
-  .then(response => response.entries)
-  .then(entries => {
-    entries.forEach(entry => (
-      detectAndHandleType(entry, './for_tests')
-    ))
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
