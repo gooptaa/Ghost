@@ -1,15 +1,15 @@
 const Dropbox = require('dropbox');
+const fs = require('fs')
 
 let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
 
-// var dbx = new Dropbox({ accessToken: 'YOUR_ACCESS_TOKEN_HERE' });
-// dbx.filesListFolder({path: ''})
-//   .then(function(response) {
-//     console.log(response);
-//   })
-//   .catch(function(error) {
-//     console.log(error);
-//   });
+var dbx = new Dropbox({ accessToken: accessToken });
 
-// still testing
-console.log(accessToken)
+dbx.filesListFolder({path: ''})
+  .then(function(response) {
+    console.log(response);
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
