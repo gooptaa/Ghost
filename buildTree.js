@@ -39,9 +39,8 @@ module.exports = origin => (
   dbx.filesListFolder({path: origin, recursive: true})
     .then(response => response.entries)
     .then(entries => {
-      console.log(entries)
       entries.forEach(entry => (
-        detectAndHandleType(entry, './for_tests')
+        detectAndHandleType(entry, './for_tests/mnt')
       ))
     })
     .catch(function(error) {
