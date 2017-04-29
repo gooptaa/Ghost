@@ -5,7 +5,7 @@ let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
 
 var dbx = new Dropbox({ accessToken: accessToken });
 
-buildTree('/node')
+buildTree('', './for_tests/mnt')
 
 
 // dbx.filesListFolder({path: ''})

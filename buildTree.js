@@ -5,17 +5,21 @@ let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
 
 var dbx = new Dropbox({ accessToken: accessToken });
 
-const findOrCreatePath = function(filepath, target, isFile){
-  if (fs.existsSync(`${target}${filepath}`)) {
-    if (isFile){
-      console.log("we got here")
-      fs.writeFile(`${target}${isFile.path_display}`, isFile, (err) => {
-        if (err) {console.error(err)}
-      })
+const findOrCreatePath = function(filepath, target, isFile = null){
+  const pathTree = filepath.split('/')
+  let subTargetPath = target.slice()
+  for (let i = 1; i < pathTree.length; i++) {
+    let subPath = pathTree[i]
+    if (!fs.existsSync(`${subTargetPath}/${subPath}`)){
+      fs.mkdirSync(`${subTargetPath}/${subPath}`)
     }
-    else {return}
+    subTargetPath += `/${subPath}`
   }
-  else fs.mkdirSync(`${target}${filepath}`)
+  if (isFile){
+    fs.writeFile(`${target}${isFile.path_display}`, isFile, (err) => {
+      if (err) {console.error(err)}
+    })
+  }
 }
 
 const detectAndHandleType = function(entry, target) {
@@ -35,16 +39,49 @@ const handleFile = function(file, target) {
   findOrCreatePath(filepath, target, file)
 }
 
-module.exports = origin => (
-  dbx.filesListFolder({path: origin, recursive: true})
-    .then(response => response.entries)
-    .then(entries => {
+const continueBuildingTree = ({cursor, target}) => {
+  let next = null
+  dbx.filesListFolderContinue({cursor})
+    .then(data => {
+      if (data.has_more) {
+        next = data.cursor
+      }
+      return data.entries
+    })
+    .then(entries =>
       entries.forEach(entry => (
-        detectAndHandleType(entry, './for_tests/mnt')
-      ))
+        detectAndHandleType(entry, target)
+      )))
+    .then(() => {
+      if (next) {
+        continueBuildingTree({cursor: next, target})
+      }
     })
     .catch(function(error) {
       console.log(error);
     })
-  )
+  }
+
+module.exports = (origin, target) => {
+  let next = null
+  dbx.filesListFolder({path: origin, recursive: true})
+    .then(data => {
+      if (data.has_more) {
+        next = data.cursor
+      }
+      return data.entries
+    })
+    .then(entries =>
+      entries.forEach(entry => (
+        detectAndHandleType(entry, target)
+      )))
+    .then(() => {
+      if (next) {
+        continueBuildingTree({cursor: next, target})
+      }
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+  }
 
