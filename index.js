@@ -5,10 +5,12 @@ let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
 
 var dbx = new Dropbox({ accessToken: accessToken });
 
-buildTree('', './for_tests/mnt')
+// buildTree('/node', './for_tests')
 
+const data = fs.statSync(__dirname+'/for_tests')
+console.log(data)
 
-// dbx.filesListFolder({path: ''})
+// dbx.filesListFolder({path: '/node'})
 //   .then(function(response) {
 //     console.log(response);
 //   })
