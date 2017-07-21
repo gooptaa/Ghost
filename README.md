@@ -1,7 +1,5 @@
 # Lazy Dropbox -- Resume Version
 
-### N.B.: This version has partial functionality. It loads selectively sync'd directories (and they are fully searchable), but it does not allow reading or writing to them yet.
-
 Lazy Dropbox is an extension app for Dropbox that allows reading and writing to selectively sync'd files directly in the cloud. Most importantly, these files are accessible to other apps, like Finder. It does this by connecting native file system calls to Dropbox API endpoints via FUSE (file system in user space), which enables initializing a virtual file system and customizing its methods.
 
 ## Set-up:
