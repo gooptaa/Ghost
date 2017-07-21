@@ -2,7 +2,6 @@ const Dropbox = require('dropbox');
 const fs = require('fs')
 
 let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
-
 var dbx = new Dropbox({ accessToken: accessToken });
 
 const findOrCreatePath = function(filepath, target, isFile = null){

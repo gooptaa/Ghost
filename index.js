@@ -1,14 +1,42 @@
+// Required libraries:
+
 const Dropbox = require('dropbox');
 const fs = require('fs')
-const buildTree = require('./buildTree')
-let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
+var fuse = require('fuse-bindings')
 
+// Required modules:
+
+const buildTree = require('./buildTree')
+const mountTree = require('./mountTree')
+const mountPath = `/Users/Guptatron/Desktop/test`
+
+
+// Initialize Dropbox:
+
+let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
 var dbx = new Dropbox({ accessToken: accessToken });
 
-// buildTree('/node', './for_tests')
+mountTree('/node')
 
-const data = fs.statSync(__dirname+'/for_tests')
-console.log(data)
+process.on('SIGINT', function () {
+  fuse.unmount(mountPath, function (err) {
+    if (err) {
+      console.log('filesystem at ' + mountPath + ' not unmounted')
+      console.error(err)
+    } else {
+      console.log('filesystem at ' + mountPath + ' unmounted')
+    }
+  })
+})
+
+// buildTree('/node', './for_tests/mnt')
+
+
+// console.log(dbx.filesGetMetadata({path: '/node/resume.pdf'})
+//   .then(function(response){
+//     console.log(response)
+//   }))
+
 
 // dbx.filesListFolder({path: '/node'})
 //   .then(function(response) {

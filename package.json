@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "dropbox": "^2.5.2",
+    "dropbox-fs": "0.0.5",
     "fuse-bindings": "^2.11.1"
   },
   "devDependencies": {},
