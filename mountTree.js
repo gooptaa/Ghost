@@ -15,8 +15,6 @@ const dfs = require('dropbox-fs')({
 
 // Argument definitions for FUSE:
 
-// const mountPath = `/Users/Guptatron/FullStack/Senior Phase/Stackathon/Ghost/for_tests/mnt`
-const mountPath = `/Users/Guptatron/Desktop/test`
 const ops = (dbxOrigin) => ({
   options: ['daemon_timeout=5', 'debug', 'auto_cache'],
   force: true,
@@ -83,7 +81,6 @@ const ops = (dbxOrigin) => ({
   },
   read: function (pth, fd, buf, len, pos, cb) {
     pth = pth === '/' ? dbxOrigin : dbxOrigin + pth
-    console.log('READ ARGUMENTS HERE: pth: ', pth, 'fd: ', fd, 'buf: ', buf, 'len: ', len, 'pos: ', pos)
     dbx.filesGetTemporaryLink({path: pth})
       .then(data => {
         let rawData
@@ -142,20 +139,6 @@ const callback = (err) => {
 
 // Send implementation to index.js:
 
-module.exports = (dbxOrigin) => {
+module.exports = (mountPath, dbxOrigin) => {
   fuse.mount(mountPath, ops(dbxOrigin), callback)
 }
-
-dfs.readdir('/node', (err, result) => {
-      if (err) {console.log(err)}
-      else {
-        let stats = {
-          mtime: result.client_modified ? result.client_modified : new Date(),
-          atime: result.client_modified ? result.client_modified : new Date(),
-          ctime: result.client_modified ? result.client_modified : new Date(),
-          size: result.size ? result.size : 100,
-          uid: process.getuid ? process.getuid() : 0,
-          gid: process.getgid ? process.getgid() : 0
-        }
-        console.log(result)}
-    })
