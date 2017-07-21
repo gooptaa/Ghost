@@ -5,9 +5,13 @@ Lazy Dropbox is an extension app for Dropbox that allows reading and writing to 
 ## Set-up:
 
 1. Enter user information into index.js:
-  a. accessToken: specific user token from Dropbox API (available here: https://www.dropbox.com/developers/reference/oauth-guide)
-  b. mountPath: directory location for virtual file system. Note: this MUST be located outside of your Dropbox folder.
-  c. dbxOrigin: directory location for selectively sync'd folders inside your Dropbox folder. Note: this should lead with a '/' and should NOT include the root directory.
+
+  accessToken: specific user token from Dropbox API (available here: https://www.dropbox.com/developers/reference/oauth-guide)
+
+  mountPath: directory location for virtual file system. Note: this MUST be located outside of your Dropbox folder.
+
+  dbxOrigin: directory location for selectively sync'd folders inside your Dropbox folder. Note: this should lead with a '/' and should NOT include the root directory.
+  
 2. run index.js from node
 
 ## Primary Dependencies:
