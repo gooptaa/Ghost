@@ -90,13 +90,13 @@ const ops = (dbxOrigin) => ({
             dataString += chunk
           })
           res.on('end', () => {
-            rawData = new Buffer(dataString)
+            rawData = Buffer.from(dataString)
             if (pos >= rawData.length){
               return cb(0)
             }
             var part = rawData.slice(pos, pos + len)
-            part.copy(buf)
-            cb(part.length)
+            let bytesRead = part.copy(buf, pos)
+            cb(bytesRead)
           })
         })
       })
@@ -104,11 +104,20 @@ const ops = (dbxOrigin) => ({
   },
   write: function (pth, fd, buf, len, pos, cb) {
     pth = pth === '/' ? dbxOrigin : dbxOrigin + pth
-    console.log('writing: ', buf.slice(0, length))
-    dfs.writeFile(pth, buf, (err) => {
-      if (err) {return cb(fuse[err.code])}
-      else {return cb(len)}
-    })
+    dbx.filesGetTemporaryLink({path: pth})
+      .then(data => {
+        let rawData, dataString;
+        https.get(data.link, (res) => {
+          res.on('data', (chunk) => {
+            dataString += chunk
+          })
+          res.on('end', () => {
+            rawData = Buffer.from(dataString)
+            let newFile = rawData.slice(0, pos).concat(buf).concat(rawData.slice(pos + len))
+            dbx.filesUploadSessionStart({contents: newFile, close: true})
+          })
+        })
+      })
   },
   mkdir: function(pth, mode, cb) {
     pth = pth === '/' ? dbxOrigin : dbxOrigin + pth
@@ -128,7 +137,7 @@ const ops = (dbxOrigin) => ({
       .catch(err => cb(fuse[err.code]))
   }
 })
-const callback = (err) => {
+const callback = (mountPath) => (err) => {
   if (err) {
     fuse.unmount(mountPath, (er) => {
       if (er) {console.log('Error unmounting: ', er)}
@@ -140,5 +149,5 @@ const callback = (err) => {
 // Send implementation to index.js:
 
 module.exports = (mountPath, dbxOrigin) => {
-  fuse.mount(mountPath, ops(dbxOrigin), callback)
+  fuse.mount(mountPath, ops(dbxOrigin), callback(mountPath))
 }

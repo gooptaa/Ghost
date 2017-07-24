@@ -3,7 +3,7 @@
 // Initialize Dropbox:
 
 const Dropbox = require('dropbox');
-let accessToken = require('./secrets').Dropbox.ACCESS_TOKEN
+let accessToken = require('../secrets').Dropbox.ACCESS_TOKEN
 var dbx = new Dropbox({ accessToken: accessToken });
 
 
